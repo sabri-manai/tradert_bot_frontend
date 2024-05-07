@@ -6,17 +6,24 @@ function News({ ticker }) {
 
     useEffect(() => {
         async function fetchNews() {
+            if (!ticker) {
+                console.log("Ticker is undefined or empty");
+                return;  // Prevent API calls if the ticker is not valid
+            }
             try {
                 const response = await axios.get(`http://127.0.0.1:5000/api/news/${ticker}`);
+                if (response.data.length === 0) {
+                    console.log("Received empty news array"); // Log for empty data
+                }
                 setNews(response.data);
             } catch (error) {
                 console.error('Error fetching the news:', error);
             }
         }
-
+    
         fetchNews();
-    }, [ticker]);
-
+    }, [ticker]);  // This effect runs whenever the ticker changes
+    
     return (
         <div className="space-y-4">
             {news.map((article, index) => (
@@ -29,5 +36,7 @@ function News({ ticker }) {
         </div>
     );
 }
+
+
 
 export default News;
